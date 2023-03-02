@@ -1,0 +1,39 @@
+{
+  "receiver": "SMAX",
+  "status": "firing",
+  "alerts": [
+        {
+      "status": "firing",
+      "labels": [
+            ],
+      "annotations": [
+            ],
+      "startsAt": "2023-03-01T15: 48: 49.327Z",
+      "endsAt": "0001-01-01T00: 00: 00Z",
+      "generatorURL": "https: //thanos-querier-openshift-monitoring.apps.munisyslab.munisys.net.ma/graph?g0.expr=velero_backup_partial_failure_total%7Bnamespace%3D%22openshift-adp%22%2Cschedule%21%3D%22%22%7D+%2F+velero_backup_attempt_total%7Bnamespace%3D%22openshift-adp%22%2Cschedule%21%3D%22%22%7D+%3E+0.25&g0.tab=1",
+      "fingerprint": "fb82ae70142817a0"
+        }
+    ],
+  "groupLabels": { "namespace": "openshift-adp"
+    },
+  "commonLabels": {
+    "alertname": "VeleroBackupPartialFailures",
+    "container": "velero",
+    "endpoint": "monitoring",
+    "instance": "172.16.10.109: 8085",
+    "job": "openshift-adp-velero-metrics-svc",
+    "namespace": "openshift-adp",
+    "pod": "velero-54bdf97fdd-nqltb",
+    "prometheus": "openshift-user-workload-monitoring/user-workload",
+    "schedule": "schedule-test-3scale",
+    "service": "openshift-adp-velero-metrics-svc",
+    "severity": "warning"
+    },
+  "commonAnnotations": {
+    "message": "Postman Test1 : Velero backup schedule-test-3scale has 100% partialy failed backups."
+    },
+  "externalURL": "https: //alertmanager-main-openshift-monitoring.apps.munisyslab.munisys.net.ma",
+  "version": "4",
+  "groupKey": "",
+  "truncatedAlerts": 0
+}
