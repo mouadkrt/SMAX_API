@@ -1,5 +1,5 @@
 
-export BASE_DIR="/root/openshift_prometheus_smax_3scale"
+export BASE_DIR="/usr/src/app"
 
 export smaxUser="ocp01@munisys.net.ma"
 export smaxPassword="123.pwdMunisys"
@@ -17,7 +17,7 @@ export smaxGroup=11012
 # 11021 is the id of the gategory "Cloud"
 
 export SMAX_Incident_DisplayLabel=$1
-export SMAX_Incident_Description=$2
+export SMAX_Incident_Description="$2"
 export externalId=$3
 export namespace=$4
 
@@ -28,12 +28,12 @@ echo "Exiting $0 script."
 exit
 fi 
 
-echo "Getting the Id of the SMAX ServiceComponent having teh same name as the namespace mentioned in the alert : "
+echo "Getting the Id of the SMAX ServiceComponent having the same name as the namespace mentioned in the alert : "
 export RegisteredForServiceComponentId=`node --no-warnings SMAX.js --Get ServiceComponent  --Host $smaxHost --TenantId $smaxTenantId --Login $smaxUser --Password $smaxPassword --Filter "DisplayLabel%3D%27$namespace%27" | jq '.entities[].properties.Id' | cut -d\" -f2`
 echo "RegisteredForServiceComponent=$RegisteredForServiceComponentId" 
 
 echo "Calling SMAX API ..."
-node --no-warnings $BASE_DIR/SMAX.js --Category $idCategorySmax --ExternalProcessReference $externalId --RequestedByPerson $smaxUserId --RegisteredForActualService $smaxOpenShiftServiceId --RegisteredForServiceComponent $RegisteredForServiceComponentId   --ServiceDeskGroup $smaxGroup  --Priority LowPriority --DisplayLabel "$SMAX_Incident_DisplayLabel" --Description "$SMAX_Incident_Description" --Host $smaxHost --TenantId $smaxTenantId --Login $smaxUser --Password $smaxPassword 
+node --no-warnings $BASE_DIR/SMAX.js --Category $idCategorySmax --ExternalProcessReference $externalId --RequestedByPerson $smaxUserId --RegisteredForActualService $smaxOpenShiftServiceId --RegisteredForServiceComponent $RegisteredForServiceComponentId  --ServiceDeskGroup $smaxGroup --Priority LowPriority --DisplayLabel "$SMAX_Incident_DisplayLabel" --Description "$SMAX_Incident_Description" --Host $smaxHost --TenantId $smaxTenantId --Login $smaxUser --Password $smaxPassword 
 
 export newIncindent=`node --no-warnings $BASE_DIR/SMAX.js --Get Incident --Host $smaxHost --TenantId $smaxTenantId --Login $smaxUser --Password $smaxPassword --Filter "ExternalProcessReference%3D%27$KEY%27%20and%20Active%3D%27True%27"`
 
