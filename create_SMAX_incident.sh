@@ -1,4 +1,4 @@
-
+#!/bin/bash
 export BASE_DIR="/usr/src/app"
 
 export smaxUser="ocp01@munisys.net.ma"

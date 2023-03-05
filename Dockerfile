@@ -8,6 +8,6 @@ EXPOSE 8085
 CMD [ "node", "apps.js" ]
 
 # Start Docker deamon
-# docker build -t quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.2 .
+# docker build -t quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.3 .
 # docker login quay.io
-# docker push quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.2
+# docker push quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.3
