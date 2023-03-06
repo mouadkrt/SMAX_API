@@ -4,15 +4,15 @@
     "description": "",
     "main": "apps.js",
     "scripts": {
-      "start": "node apps.js"
+        "start": "node apps.js"
     },
-    "keywords": [
-      
-    ],
+    "keywords": [],
     "author": "Sentissi Mouad",
     "license": "ISC",
     "dependencies": {
-      "body-parser": "^1.20.1",
-      "express": "^4.17.1"
+        "body-parser": "^1.20.1",
+        "console-emojis": "^1.0.4",
+        "express": "^4.17.1",
+        "minimist": "^1.2.8"
     }
-  }
+}
