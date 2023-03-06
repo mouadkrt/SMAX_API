@@ -4,7 +4,10 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 RUN apt-get update && apt-get install -y jq
-RUN chmod +x *.sh
+COPY . .
+RUN chmod +x /usr/src/app/create_SMAX_incident.sh
+RUN chmod +x /usr/src/app/get_SMAX_incident.sh
+RUN chmod +x /usr/src/app/close_SMAX_incidents.sh
 EXPOSE 8085
 
 CMD [ "node", "apps.js" ]
