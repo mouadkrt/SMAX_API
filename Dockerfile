@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 RUN apt-get update && apt-get install -y jq
-COPY . .
+RUN chmod +x *.sh
 EXPOSE 8085
 
 CMD [ "node", "apps.js" ]
