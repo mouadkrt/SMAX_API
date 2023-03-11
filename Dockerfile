@@ -2,13 +2,13 @@
 FROM redhat/ubi8
 #FROM registry.access.redhat.com/ubi8/nodejs-16:1-90
 WORKDIR /usr/src/app
-COPY package*.json ./
+COPY . .
+RUN chmod +x /usr/src/app/*.sh
 RUN yum install -y gcc-c++ make 
 RUN curl -sL https://rpm.nodesource.com/setup_16.x | bash - 
 RUN yum install -y nodejs jq npm
-COPY . .
+RUN npm install
 
-RUN chmod +x /usr/src/app/*.sh
 EXPOSE 8085
 
 CMD [ "node", "apps.js" ]
