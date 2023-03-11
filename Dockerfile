@@ -5,19 +5,21 @@ COPY package*.json ./
 RUN npm install
 RUN apt-get update && apt-get install -y jq
 COPY . .
-RUN chmod +x /usr/src/app/create_SMAX_incident.sh
-RUN chmod +x /usr/src/app/get_SMAX_incident.sh
-RUN chmod +x /usr/src/app/close_SMAX_incidents.sh
+
+RUN chmod +x /usr/src/app/*.sh
 EXPOSE 8085
 
 CMD [ "node", "apps.js" ]
 
 # Start Docker deamon
-# docker build -t quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.14 .
+# docker build -t quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.15 .
 # docker login quay.io
-# docker push quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.14
+# docker push quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.15
 
-# Think of cleaning the files (specialy shell script), when moving from Windows env into uinx inside the containes :
+# Local test on DockerDesktop :
+# docker run --rm -it --network host quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.15
+
+# Think of cleaning the files (specialy shell script), when moving from Windows env into unix inside the container :
 #   sed -i 's/\r//' your_script.sh
 #   OR dos2unix your_script.sh
 #   OR Notepad++ Edit -> EOL Convesion -> Unix (LF)
