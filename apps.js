@@ -74,6 +74,40 @@ else if(status=="resolved") {
 
 });
 
+app.post('/actualservice/new',function(req,res){
+	console.log("\n\n----------------------------");
+	console.log('POST request received on /actualservice/new. req.body : ');
+	console.log(req.body);
+	console.log('----------------------------');
+	
+	DisplayLabel	= req.body.DisplayLabel;
+	Subtype 		= req.body.Subtype;
+	OCP_Namespace	= req.body.OCP_Namespace;
+	
+	console.log("\n\n----------------------------");
+	console.log("Info extracted from Request JSON body : ");
+	console.log("DisplayLabel = " + DisplayLabel);
+	console.log("Subtype = " + Subtype);
+	console.log("OCP_Namespace = " + OCP_Namespace);
+	console.log('----------------------------');
+	
+	create_SMAX_SACM_ActualService = "./create_SMAX_SACM_ActualService.sh " + "\"" + DisplayLabel + "\" \"" + Subtype + "\" \"" + OCP_Namespace + "\"";
+	
+	console.log("Executing shell command : \n" + create_SMAX_SACM_ActualService);
+	exec(create_SMAX_SACM_ActualService, (error, stdout, stderr) => {
+		if (error) {
+			console.log(`${error.message}`);
+			return;
+		}
+		if (stderr) {
+			console.log(`${stderr}`);
+			return;
+		}
+		console.log(`${stdout}`);
+		res.end("SMAX/SACM/ActuallService created successfully");
+	});
+});
+
 app.listen(port, () => {
   console.log(`Nodejs app listening on port ${port}`)
 })

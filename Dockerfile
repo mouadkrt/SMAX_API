@@ -12,12 +12,15 @@ EXPOSE 8085
 CMD [ "node", "apps.js" ]
 
 # Start Docker deamon
-# docker build -t quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.15 .
-# docker login quay.io
-# docker push quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.15
+# docker build -t smax_api:1.0.15 .
+# Tag it and push to quay
+# docker tag smax_api:1.0.15 quay.io/msentissi/smax_api:1.0.15
+# docker push quay.io/msentissi/smax_api:1.0.15
+# OR tag it and push to dockerhub
+# docker push msentissi/smax_api:1.0.15
 
 # Local test on DockerDesktop :
-# docker run --rm -it --network host quay.io/msentissi/ocp_prometheus_smax_3scale:1.0.15
+# docker run --rm -it --network host smax_api:1.0.15
 
 # Think of cleaning the files (specialy shell script), when moving from Windows env into unix inside the container :
 #   sed -i 's/\r//' your_script.sh

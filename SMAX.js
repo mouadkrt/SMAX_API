@@ -76,7 +76,6 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 // SMAX 2021.05 Auth end-point :
         var authPath            =       "/auth/authentication-endpoint/authenticate/token?TENANTID="+TenantId;
-
         var authBODY            =   JSON.stringify({"login":Login, "password": Pass}, null, 2);
         var smaxAuthToken   =   null;
         var authOptions = {
@@ -131,6 +130,56 @@ var createIncident      =       function(token, incidentData, CreateOrUpdate ) {
         };
 
         const data = new TextEncoder().encode( JSON.stringify(incidentData) );
+
+        req.write(data);
+        req.end();
+}
+
+
+var createSacmActualService      =       function(token, sacmData, CreateOrUpdate ) {
+        var options = {
+                hostname        :       Host,
+                port            :       Port,
+                method          :       'POST',
+                json            :       true,
+                headers         :       { 'Content-Type' : 'application/json', Cookie : 'SMAX_AUTH_TOKEN=' + token },
+                path            :       "/rest/" + TenantId + "/ems/bulk"
+    };
+
+        verbose('','\n\n-----------------createSacmActualService(...) :  New https request against : ' + options.path);
+        verbose('options', options);
+        var req = https.request(options, (res) => {
+
+        verbose('RESPONSE : statusCode and headers', res.statusCode, res.headers);
+
+         res.on('data', (d) => {
+                verbose('','\n--- Data received:');
+                process.stdout.write(d);
+                resp = JSON.parse(d);
+                console.log(resp);
+                if(resp.entity_result_list[0].completion_status == 'OK') {
+                        newSacmId = resp.entity_result_list[0].entity.properties.Id;
+                        verbose('',"\n\nSACM ActualService " + newSacmId + (argv.Id ? " updated" : " created ") + " successfully !")
+                        verbose('',"URL : " + BaseUrl + "/saw/ActualService/" + newSacmId + "/general?TENANTID=" + TenantId);
+                }
+
+          });
+        });
+
+        req.on('error', (e) => { console.error(e); });
+
+        sacmData = {
+        "entities": [
+                        {
+                                "entity_type": "ActualService",
+                                "properties":
+                                        Object.assign({},sacmData)
+                        }
+        ],
+        "operation": CreateOrUpdate
+        };
+
+        const data = new TextEncoder().encode( JSON.stringify(sacmData) );
 
         req.write(data);
         req.end();
@@ -194,54 +243,6 @@ var getEntity   =       function(entityType, entityId, layout, relatedEntity="",
         });
 }
 
-var createSACMBizService      =       function(token, sacmData, CreateOrUpdate ) {
-        var options = {
-                hostname        :       Host,
-                port            :       Port,
-                method          :       'POST',
-                json            :       true,
-                headers         :       { 'Content-Type' : 'application/json', Cookie : 'SMAX_AUTH_TOKEN=' + token },
-                path            :       "/rest/" + TenantId + "/ems/bulk"
-    };
-
-        verbose('','\n\n-----------------createSACMBizService(...) :  New https request against : ' + options.path);
-        verbose('options', options);
-        var req = https.request(options, (res) => {
-
-        verbose('RESPONSE : statusCode and headers', res.statusCode, res.headers);
-
-         res.on('data', (d) => {
-                verbose('','\n--- Data received:');
-                process.stdout.write(d);
-                resp = JSON.parse(d);
-                console.log(resp);
-                if(resp.entity_result_list[0].completion_status == 'OK') {
-                        newSacmId = resp.entity_result_list[0].entity.properties.Id;
-                        verbose('',"\n\nSACM ActualService " + newSacmId + (argv.Id ? " updated" : " created ") + " successfully !")
-                        verbose('',"URL : " + BaseUrl + "/saw/ActualService/" + newSacmId + "/general?TENANTID=" + TenantId);
-                }
-
-          });
-        });
-
-        req.on('error', (e) => { console.error(e); });
-
-        sacmData = {
-        "entities": [
-                        {
-                                "entity_type": "ActualService",
-                                "properties":
-                                        Object.assign({},sacmData)
-                        }
-        ],
-        "operation": CreateOrUpdate
-        };
-
-        const data = new TextEncoder().encode( JSON.stringify(sacmData) );
-
-        req.write(data);
-        req.end();
-}
 
 var smaxAuth = function() { // Authenticate then submit incident creation :
         verbose('','--------------Authentication -------------------');
@@ -298,9 +299,9 @@ if(!argv.web) {
         smaxAuth().then((smaxAuthToken)=>{ // Let's login first
                 console.log(argv);
                 if(argv.SACM_Create) {
-                        verbose("", "Calling createSACMBizService(...) ...");
+                        verbose("", "Calling createSacmActualService(...) ...");
                         delete argv.SACM_Create
-                        createSACMBizService(smaxAuthToken, argv, argv.Id ? "UPDATE" : "CREATE");
+                        createSacmActualService(smaxAuthToken, argv, argv.Id ? "UPDATE" : "CREATE");
                 }
                 else if(!argv.Get) { // This is a create/update request
                         verbose("", "Calling createIncident(...) ...");

@@ -17,7 +17,7 @@ export SMAX_Incident_DisplayLabel=$1
 export SMAX_Incident_Description="$2"
 export externalId=$3
 export namespace=$4
-echo "SMAX_Incident_DisplayLabel : $SMAX_Incident_DisplayLabel \n SMAX_Incident_Description : $SMAX_Incident_Description \n externalId : $externalId \n namespace : $namespace"
+echo -e "SMAX_Incident_DisplayLabel : $SMAX_Incident_DisplayLabel \n SMAX_Incident_Description : $SMAX_Incident_Description \n externalId : $externalId \n namespace : $namespace"
 export incidentExists=`./get_SMAX_incident.sh $externalId | jq '.entities[].properties.Id' | wc -l`
 if [ $incidentExists -ne 0 ]
 then
