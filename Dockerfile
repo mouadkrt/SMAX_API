@@ -1,15 +1,17 @@
-FROM node:16
+#FROM node:16
+FROM redhat/ubi8
 #FROM registry.access.redhat.com/ubi8/nodejs-16:1-90
 WORKDIR /usr/src/app
 COPY package*.json ./
+RUN yum update -y && yum install -y jq nodejs npm
 RUN npm install
-RUN apt-get update && apt-get install -y jq
 COPY . .
 
 RUN chmod +x /usr/src/app/*.sh
 EXPOSE 8085
 
-CMD [ "node", "apps.js" ]
+#CMD [ "node", "apps.js" ]
+CMD [ "bash" ]
 
 # Start Docker deamon
 # docker build -t smax_api:1.0.15 .
