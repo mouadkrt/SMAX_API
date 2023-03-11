@@ -1,10 +1,9 @@
 // Munisys generic script for SMAX API integrations
-// 07/09/2021
 
-var path = require('path');
+var path           = require('path');
 var scriptFileName = path.basename(__filename);
-var _verbose                    =       false;
-var verbose                     =       function(label, ...d) { if(_verbose) {console.log("\n\n"+label + " : "); console.log(...d);}}
+var _verbose       = false;
+var verbose        = function(label, ...d) { if(_verbose) {console.log("\n\n"+label + " : "); console.log(...d);}}
 require('console-emojis');
 
 {
@@ -17,11 +16,10 @@ require('console-emojis');
                 "Urgency"                       :       "SlightDisruption",
                 "CompletionCode"                :       null,
                 "Priority"                      :       "LowPriority",
-                "IncidentAttachments"   		:       "{\"complexTypeProperties\":[]}"
+                "IncidentAttachments"   	:       "{\"complexTypeProperties\":[]}"
         }
 
         var argv = require('minimist')(process.argv.slice(2)); // "node" et "<scriptName>.js" removed from CLI args + support from https://www.npmjs.com/package/minimist in order to be able to call this script with --key1 val1 --key2 val2
-
 
         if(argv.help) {
                 console.log("\n");
@@ -100,7 +98,7 @@ var createIncident      =       function(token, incidentData, CreateOrUpdate ) {
                 path            :       "/rest/" + TenantId + "/ems/bulk"
     };
 
-        verbose('','\n\n----------------- New https request against : ' + options.path);
+        verbose('','\n\n----------------- createIncident(...) :  New https request against : ' + options.path);
         verbose('options', options);
         var req = https.request(options, (res) => {
 
@@ -138,7 +136,6 @@ var createIncident      =       function(token, incidentData, CreateOrUpdate ) {
         req.end();
 }
 
-
 var getEntity   =       function(entityType, entityId, layout, relatedEntity="", relatedEntityLayout="Id", filter=""  ) {
 
         return new Promise(function(resolve, reject) { // Let's go Async with promises
@@ -155,7 +152,7 @@ var getEntity   =       function(entityType, entityId, layout, relatedEntity="",
 				
                 var options             =       Object.assign({...authOptions}, {method : 'GET', path : entityPath}); // Override/merge some of authOptions keys
 
-                verbose('','\n\n----------------- New https request against : ' + options.path);
+                verbose('','\n\n----------------- getEntity(...) :  New https request against : ' + options.path);
                 verbose('options', options);
 
                 var req = https.get(options, (res) => {
@@ -197,6 +194,55 @@ var getEntity   =       function(entityType, entityId, layout, relatedEntity="",
         });
 }
 
+var createSACMBizService      =       function(token, sacmData, CreateOrUpdate ) {
+        var options = {
+                hostname        :       Host,
+                port            :       Port,
+                method          :       'POST',
+                json            :       true,
+                headers         :       { 'Content-Type' : 'application/json', Cookie : 'SMAX_AUTH_TOKEN=' + token },
+                path            :       "/rest/" + TenantId + "/ems/bulk"
+    };
+
+        verbose('','\n\n-----------------createSACMBizService(...) :  New https request against : ' + options.path);
+        verbose('options', options);
+        var req = https.request(options, (res) => {
+
+        verbose('RESPONSE : statusCode and headers', res.statusCode, res.headers);
+
+         res.on('data', (d) => {
+                verbose('','\n--- Data received:');
+                process.stdout.write(d);
+                resp = JSON.parse(d);
+                console.log(resp);
+                if(resp.entity_result_list[0].completion_status == 'OK') {
+                        newSacmId = resp.entity_result_list[0].entity.properties.Id;
+                        verbose('',"\n\nSACM ActualService " + newSacmId + (argv.Id ? " updated" : " created ") + " successfully !")
+                        verbose('',"URL : " + BaseUrl + "/saw/ActualService/" + newSacmId + "/general?TENANTID=" + TenantId);
+                }
+
+          });
+        });
+
+        req.on('error', (e) => { console.error(e); });
+
+        sacmData = {
+        "entities": [
+                        {
+                                "entity_type": "ActualService",
+                                "properties":
+                                        Object.assign({},sacmData)
+                        }
+        ],
+        "operation": CreateOrUpdate
+        };
+
+        const data = new TextEncoder().encode( JSON.stringify(sacmData) );
+
+        req.write(data);
+        req.end();
+}
+
 var smaxAuth = function() { // Authenticate then submit incident creation :
         verbose('','--------------Authentication -------------------');
         return new Promise(function(resolve, reject) {
@@ -220,6 +266,7 @@ var smaxAuth = function() { // Authenticate then submit incident creation :
                                 delete argv.Password;
                                 delete argv.Host;
                                 delete argv.TenantId;
+                                
                                 if(argv.Id) { // Only force the Incident into the "Log" Phase if we're creating a new one.
                                         delete argv.PhaseId;
                                         delete incidentDefautData.PhaseId;
@@ -242,12 +289,25 @@ var smaxAuth = function() { // Authenticate then submit incident creation :
         });
 }
 
-if(!argv.web) { // If calling this script from web, the web server script will drive the function calls,
+if(!argv.web) {
+        // We'll get here only if calling this script manually from CLI : "node --no-warnings SMAX.js ......"
+        // If calling this script from web, then
+        // the web server script (app.js for example) will invoke the right shell script, according to the exposed endpoint
+        // then the so called shell script will finally make use of this script (SMAX.js) as well
+        
         smaxAuth().then((smaxAuthToken)=>{ // Let's login first
-                if(!argv.Get) // This is a create/update request
-                                createIncident(smaxAuthToken, argv, argv.Id ? "UPDATE" : "CREATE");
-
+                console.log(argv);
+                if(argv.SACM_Create) {
+                        verbose("", "Calling createSACMBizService(...) ...");
+                        delete argv.SACM_Create
+                        createSACMBizService(smaxAuthToken, argv, argv.Id ? "UPDATE" : "CREATE");
+                }
+                else if(!argv.Get) { // This is a create/update request
+                        verbose("", "Calling createIncident(...) ...");
+                        createIncident(smaxAuthToken, argv, argv.Id ? "UPDATE" : "CREATE");
+                }
                 else {  // This is a Get request
+                        verbose("Detected GET Request", "Calling getEntity(...) [Only Incident, ServiceComponent and GestionBons_c are supported in this version]");
                         tmp = argv.Get.split(":");
                         var entityType  =       tmp[0];
                         var entityId    =       tmp[1];
