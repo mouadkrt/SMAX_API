@@ -23,6 +23,6 @@ CMD [ "node", "apps.js" ]
 # docker run --rm -it --network host smax_api:1.0.15
 
 # Think of cleaning the files (specialy shell script), when moving from Windows env into unix inside the container :
-#   sed -i 's/\r//' your_script.sh
+#   sed -i 's/\r//' *.sh
 #   OR dos2unix your_script.sh
 #   OR Notepad++ Edit -> EOL Convesion -> Unix (LF)

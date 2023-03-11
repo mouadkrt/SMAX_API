@@ -297,7 +297,7 @@ if(!argv.web) {
         // then the so called shell script will finally make use of this script (SMAX.js) as well
         
         smaxAuth().then((smaxAuthToken)=>{ // Let's login first
-                console.log(argv);
+                //console.log(argv);
                 if(argv.SACM_Create) {
                         verbose("", "Calling createSacmActualService(...) ...");
                         delete argv.SACM_Create

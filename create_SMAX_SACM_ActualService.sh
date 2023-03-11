@@ -17,15 +17,16 @@ export SMAX_ActualService_Subtype=$2
 export OCP_Namespace=$3
 
 echo "Trying to get ServiceComponent Id having DisplayLabel='$OCP_Namespace' : "
+
 export OCP_Namespace_Id=`node --no-warnings SMAX.js --Get ServiceComponent  --Host $smaxHost --TenantId $smaxTenantId --Login $smaxUser --Password $smaxPassword --Filter "DisplayLabel%3D%27$OCP_Namespace%27" | jq '.entities[].properties.Id' | cut -d\" -f2`
 echo "OCP_Namespace_Id=$OCP_Namespace_Id"
 
 echo "Calling SMAX API to create new SACM/ActualService... "
-node --no-warnings $BASE_DIR/SMAX.js --SACM_Create --DisplayLabel "$SMAX_ActualService_DisplayLabel" --Subtype "$SMAX_ActualService_Subtype" --PhaseId pBuild --ContainedInServiceDefinition 17445 --NS_c $OCP_Namespace_Id --Host $smaxHost --TenantId $smaxTenantId --Login $smaxUser --Password $smaxPassword 
+node --no-warnings $BASE_DIR/SMAX.js --SACM_Create --DisplayLabel "$SMAX_ActualService_DisplayLabel" --SubType "$SMAX_ActualService_Subtype" --PhaseId pBuild --ContainedInServiceDefinition 17445 --NS_c $OCP_Namespace_Id --Host $smaxHost --TenantId $smaxTenantId --Login $smaxUser --Password $smaxPassword 
 
 
 #Example :
-# node --no-warnings SMAX.js --SACM_Create --DisplayLabel "SMAX_ActualService_DisplayLabel" --SubType "BusinessService" --PhaseId pBuild --ContainedInServiceDefinition 17445 --Host esmdev.munisys.net.ma --TenantId 443446922 --Login ocp01@munisys.net.ma --Password 123.pwdMunisys
+# node --no-warnings SMAX.js --SACM_Create --DisplayLabel "SMAX_ActualService_DisplayLabel" --SubType "BusinessService" --PhaseId pBuild --ContainedInServiceDefinition 17445 --NS_c 25559 --Host esmdev.munisys.net.ma --TenantId 443446922 --Login ocp01@munisys.net.ma --Password 123.pwdMunisys
 # Other possible options :
 #   Environment : String Production | Test | Staging | Dev | Other
 #   ContainedInServiceDefinition : String Red Hat OpenShift (id:17445) (This is a SMAX ServiceDefinition [In catalog])
