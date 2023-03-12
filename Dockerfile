@@ -9,6 +9,9 @@ RUN curl -sL https://rpm.nodesource.com/setup_16.x | bash -
 RUN yum install -y nodejs jq npm
 RUN npm install
 
+RUN sed  '2 i nameserver 8.8.8.8' /etc/resolv.conf   > /tmp/resolv.conf.tmp
+RUN cp /tmp/resolv.conf.tmp /etc/resolv.conf
+
 EXPOSE 8085
 
 CMD [ "node", "apps.js" ]
