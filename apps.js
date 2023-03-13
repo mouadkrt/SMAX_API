@@ -7,8 +7,8 @@ app.use(bodyParser.json());
 
 const port = 8085
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+app.get('/ready', (req, res) => {
+  res.send('YES !')
 })
 
 

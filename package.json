@@ -13,6 +13,8 @@
         "body-parser": "^1.20.1",
         "console-emojis": "^1.0.4",
         "express": "^4.17.1",
-        "minimist": "^1.2.8"
+        "minimist": "^1.2.8",
+        "swagger-autogen": "^2.22.0",
+        "swagger-ui-express": "^4.6.0"
     }
 }

@@ -1,0 +1,3 @@
+npm install
+node swagger.js
+node apps.js

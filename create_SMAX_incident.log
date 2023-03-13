@@ -1,0 +1,2 @@
+# Dont remove his file from GIT repo, otherwiser it won't be copied to container
+# and then you may face permissions issues while the running container tries creating it
