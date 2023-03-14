@@ -81,17 +81,17 @@ app.post('/actualservice/new',function(req,res){
 	console.log('----------------------------');
 	
 	DisplayLabel	= req.body.DisplayLabel;
-	Subtype 		= req.body.Subtype;
+	//Subtype 		= req.body.Subtype;
 	OCP_Namespace	= req.body.OCP_Namespace;
 	
 	console.log("\n\n----------------------------");
 	console.log("Info extracted from Request JSON body : ");
 	console.log("DisplayLabel = " + DisplayLabel);
-	console.log("Subtype = " + Subtype);
+	//console.log("Subtype = " + Subtype);
 	console.log("OCP_Namespace = " + OCP_Namespace);
 	console.log('----------------------------');
 	
-	create_SMAX_SACM_ActualService = "./create_SMAX_SACM_ActualService.sh " + "\"" + DisplayLabel + "\" \"" + Subtype + "\" \"" + OCP_Namespace + "\"";
+	create_SMAX_SACM_ActualService = "./create_SMAX_SACM_ActualService.sh " + "\"" + DisplayLabel + "\" \"" + OCP_Namespace + "\"";
 	
 	console.log("Executing shell command : \n" + create_SMAX_SACM_ActualService);
 	exec(create_SMAX_SACM_ActualService, (error, stdout, stderr) => {
